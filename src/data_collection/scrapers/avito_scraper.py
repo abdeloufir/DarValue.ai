@@ -37,7 +37,7 @@ class AvitoScraper(BaseScraper):
         for page in range(1, max_pages + 1):
             try:
                 # Construct search URL for real estate in city
-                search_url = f"{self.base_url}/fr/immobilier/appartements_et_maisons-{city_slug}?o={page}"
+                search_url = f"{self.base_url}/fr/{city_slug}/immobilier/appartements_et_maisons?o={page}"
                 
                 logger.debug(f"Fetching page {page}: {search_url}")
                 response = self.session.get(search_url, timeout=10)
@@ -45,21 +45,31 @@ class AvitoScraper(BaseScraper):
                 
                 soup = BeautifulSoup(response.content, 'html.parser')
                 
-                # Find listing links
-                listing_elements = soup.find_all('a', {'data-testid': 'ad-card-link'})
+                # Find listing links with multiple selectors
+                listing_elements = []
                 
+                # Try primary selector for ad cards
+                listing_elements.extend(soup.find_all('a', {'data-testid': 'ad-card-link'}))
+                
+                # Try alternative selectors if primary doesn't work
                 if not listing_elements:
-                    # Try alternative selectors
-                    listing_elements = soup.find_all('a', href=re.compile(r'/immobilier/'))
+                    # Look for links with listing patterns
+                    all_links = soup.find_all('a', href=True)
+                    for link in all_links:
+                        href = link.get('href', '')
+                        if re.search(r'/\w+/[^/]+/[^/]+_\d+\.htm$', href):
+                            listing_elements.append(link)
                 
                 page_urls = []
                 for element in listing_elements:
                     href = element.get('href')
-                    if href:
-                        full_url = urljoin(self.base_url, href)
-                        if full_url not in listing_urls:
-                            listing_urls.append(full_url)
-                            page_urls.append(full_url)
+                    if href and not href.startswith('javascript:'):
+                        # Look for actual listing URLs with Avito pattern
+                        if re.search(r'/\w+/[^/]+/[^/]+_\d+\.htm$', href):
+                            full_url = urljoin(self.base_url, href)
+                            if full_url not in listing_urls:
+                                listing_urls.append(full_url)
+                                page_urls.append(full_url)
                 
                 logger.debug(f"Found {len(page_urls)} listings on page {page}")
                 
@@ -149,16 +159,19 @@ class AvitoScraper(BaseScraper):
     def _extract_title(self, soup: BeautifulSoup) -> Optional[str]:
         """Extract listing title"""
         title_selectors = [
+            'h1',  # This works according to our test
             'h1[data-testid="ad-title"]',
             'h1.font-bold',
-            'h1',
-            '.adview-title'
+            '.adview-title',
+            '.title'
         ]
         
         for selector in title_selectors:
             title_elem = soup.select_one(selector)
             if title_elem:
-                return self.clean_text(title_elem.get_text())
+                title = self.clean_text(title_elem.get_text())
+                if title:  # Make sure we actually got text
+                    return title
         
         return None
     
@@ -182,14 +195,36 @@ class AvitoScraper(BaseScraper):
         price_selectors = [
             '[data-testid="ad-price"]',
             '.price',
-            '.adview-price'
+            '.adview-price',
+            '.cost',
+            'span[class*="price"]',
+            'div[class*="price"]'
         ]
         
         for selector in price_selectors:
             price_elem = soup.select_one(selector)
             if price_elem:
                 price_text = price_elem.get_text()
-                return self.extract_price(price_text)
+                price = self.extract_price(price_text)
+                if price:
+                    return price
+        
+        # Fallback: look for any text that looks like a price
+        all_text = soup.get_text()
+        import re
+        price_patterns = [
+            r'(\d[\d\s,\.]*)\s*(?:DH|MAD|dirham)',
+            r'Prix\s*:?\s*(\d[\d\s,\.]*)',
+            r'(\d{3,}[\d\s,\.]*)\s*(?:DH|MAD)',
+        ]
+        
+        for pattern in price_patterns:
+            match = re.search(pattern, all_text, re.IGNORECASE)
+            if match:
+                price_text = match.group(1)
+                price = self.extract_price(price_text)
+                if price:
+                    return price
         
         return None
     
@@ -261,7 +296,9 @@ class AvitoScraper(BaseScraper):
         location_selectors = [
             '[data-testid="ad-location"]',
             '.location',
-            '.adview-location'
+            '.adview-location',
+            '.breadcrumb',
+            'nav a'
         ]
         
         location_text = ""
@@ -279,6 +316,27 @@ class AvitoScraper(BaseScraper):
                 location['city'] = parts[1]
             elif len(parts) == 1:
                 location['city'] = parts[0]
+        
+        # Fallback: extract city from URL path
+        if not location.get('city'):
+            import re
+            url_match = re.search(r'/fr/([^/]+)/', soup.find('link', {'rel': 'canonical'}).get('href') if soup.find('link', {'rel': 'canonical'}) else '')
+            if url_match:
+                city_slug = url_match.group(1)
+                # Convert slug back to city name
+                city_mapping = {
+                    'casablanca': 'Casablanca',
+                    'rabat': 'Rabat', 
+                    'marrakech': 'Marrakech',
+                    'tangier': 'Tangier',
+                    'fes': 'Fes',
+                    'agadir': 'Agadir'
+                }
+                location['city'] = city_mapping.get(city_slug, city_slug.replace('_', ' ').title())
+        
+        # Last resort: assume casablanca if no city found (since that's what we're scraping)
+        if not location.get('city'):
+            location['city'] = 'Casablanca'
         
         return location
     

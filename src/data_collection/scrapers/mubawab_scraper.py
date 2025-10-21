@@ -36,21 +36,53 @@ class MubawabScraper(BaseScraper):
         
         for page in range(1, max_pages + 1):
             try:
-                # Construct search URL for real estate in city
-                search_url = f"{self.base_url}/en/buy/morocco/{city_slug}/real-estate?page={page}"
+                # Try different URL patterns for Mubawab
+                url_patterns = [
+                    f"{self.base_url}/fr/acheter/maroc/{city_slug}/immobilier?page={page}",
+                    f"{self.base_url}/en/buy/morocco/{city_slug}/real-estate?page={page}",
+                    f"{self.base_url}/fr/acheter/{city_slug}/appartements-maisons-villas?page={page}",
+                    f"{self.base_url}/fr/acheter/maroc/{city_slug}?page={page}"
+                ]
                 
-                logger.debug(f"Fetching page {page}: {search_url}")
-                response = self.session.get(search_url, timeout=10)
-                response.raise_for_status()
+                response = None
+                search_url = None
                 
+                for url_pattern in url_patterns:
+                    try:
+                        logger.debug(f"Trying URL pattern: {url_pattern}")
+                        response = self.session.get(url_pattern, timeout=10)
+                        if response.status_code == 200:
+                            search_url = url_pattern
+                            break
+                    except:
+                        continue
+                
+                if not response or response.status_code != 200:
+                    logger.warning(f"All URL patterns failed for {city_slug} page {page}")
+                    continue
+                
+                logger.debug(f"Using successful URL: {search_url}")
                 soup = BeautifulSoup(response.content, 'html.parser')
                 
-                # Find listing links
-                listing_elements = soup.find_all('a', class_=re.compile(r'listing-card|property-card'))
+                # Find listing links with multiple selectors
+                listing_elements = []
                 
-                if not listing_elements:
-                    # Try alternative selectors
-                    listing_elements = soup.find_all('a', href=re.compile(r'/property/'))
+                # Try various selectors for Mubawab
+                selectors = [
+                    'a[class*="listing-card"]',
+                    'a[class*="property-card"]', 
+                    'a[class*="card"]',
+                    'a[href*="/property/"]',
+                    'a[href*="/annonce/"]',
+                    '.listing-item a',
+                    '.property-item a'
+                ]
+                
+                for selector in selectors:
+                    elements = soup.select(selector)
+                    if elements:
+                        listing_elements.extend(elements)
+                        break
                 
                 page_urls = []
                 for element in listing_elements:
