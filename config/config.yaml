@@ -1,0 +1,80 @@
+# Configuration for different platforms and cities
+cities:
+  - casablanca
+  - rabat  
+  - marrakech
+  - tangier
+  - fes
+  - agadir
+
+platforms:
+  - avito
+  - mubawab
+  - sarouty
+
+# Platform-specific scraper configurations
+scrapers:
+  avito:
+    max_pages: 10
+    delay: 1.5  # seconds between requests
+    timeout: 30
+    retry_attempts: 3
+    use_selenium: false
+    
+  mubawab:
+    max_pages: 10
+    delay: 1.0
+    timeout: 25
+    retry_attempts: 3
+    use_selenium: false
+    
+  sarouty:
+    max_pages: 8
+    delay: 2.0
+    timeout: 35
+    retry_attempts: 2
+    use_selenium: true  # Sarouty requires JavaScript
+
+# Data quality settings
+data_quality:
+  min_price: 50000  # Minimum price in MAD
+  max_price: 50000000  # Maximum price in MAD
+  min_surface: 20  # Minimum surface in m²
+  max_surface: 2000  # Maximum surface in m²
+  required_fields:
+    - title
+    - city
+    - price_mad
+
+# Image processing settings
+image_processing:
+  min_resolution: [300, 300]  # minimum width, height
+  max_file_size: 5242880  # 5MB in bytes
+  quality_threshold: 0.3
+  room_types:
+    - bedroom
+    - kitchen
+    - bathroom
+    - living_room
+    - exterior
+    - garden
+    - unknown
+
+# Geospatial enrichment settings
+geospatial:
+  poi_radius: 1000  # meters
+  city_centers:
+    casablanca: [33.5731, -7.5898]
+    rabat: [34.0209, -6.8416]
+    marrakech: [31.6295, -7.9811]
+    tangier: [35.7595, -5.8340]
+    fes: [34.0181, -5.0078]
+    agadir: [30.4278, -9.5981]
+  
+  airports:
+    casablanca: [33.3676, -7.5897]
+    rabat: [34.0515, -6.7515]
+    marrakech: [31.6069, -8.0363]
+    tangier: [35.7269, -5.9169]
+    fes: [33.9273, -4.9676]
+    agadir: [30.3814, -9.5463]
