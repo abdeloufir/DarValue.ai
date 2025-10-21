@@ -14,8 +14,8 @@ from loguru import logger
 from difflib import SequenceMatcher
 import hashlib
 
-from ..database import get_db_session, Listing
-from ..utils.monitoring import get_logger
+from src.database import get_db_session, Listing
+from src.utils.monitoring import get_logger
 
 
 @dataclass

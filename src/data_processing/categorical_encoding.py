@@ -12,7 +12,7 @@ import pickle
 import json
 from loguru import logger
 
-from ..utils.monitoring import get_logger
+from src.utils.monitoring import get_logger
 
 
 @dataclass

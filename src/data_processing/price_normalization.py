@@ -11,7 +11,7 @@ from datetime import datetime, date
 import requests
 from loguru import logger
 
-from ..utils.monitoring import get_logger
+from src.utils.monitoring import get_logger
 
 
 @dataclass

@@ -12,7 +12,7 @@ from sklearn.feature_selection import SelectKBest, f_regression, mutual_info_reg
 import warnings
 from loguru import logger
 
-from ..utils.monitoring import get_logger
+from src.utils.monitoring import get_logger
 
 
 @dataclass

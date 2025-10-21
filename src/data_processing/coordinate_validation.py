@@ -14,7 +14,7 @@ import geopandas as gpd
 from shapely.geometry import Point
 from loguru import logger
 
-from ..utils.monitoring import get_logger
+from src.utils.monitoring import get_logger
 
 
 @dataclass

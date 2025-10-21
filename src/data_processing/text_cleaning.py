@@ -10,7 +10,7 @@ from dataclasses import dataclass
 import unicodedata
 from loguru import logger
 
-from ..utils.monitoring import get_logger
+from src.utils.monitoring import get_logger
 
 
 @dataclass

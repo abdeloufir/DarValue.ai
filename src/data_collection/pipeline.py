@@ -13,10 +13,10 @@ from sqlalchemy.orm import Session
 from loguru import logger
 import time
 
-from ..database import get_db_session, Listing, ListingEnrichment, ListingImage, ScrapingLog
-from ..scrapers import get_scraper, PropertyListing
-from ..enrichment import GeospatialEnricher, MoroccanDataEnricher
-from ..enrichment.image_collector import ImageDownloader, CloudImageStorage, ImageProcessor
+from src.database import get_db_session, Listing, ListingEnrichment, ListingImage, ScrapingLog
+from .scrapers import get_scraper, PropertyListing
+from .enrichment import GeospatialEnricher, MoroccanDataEnricher
+from .enrichment.image_collector import ImageDownloader, CloudImageStorage, ImageProcessor
 
 
 @dataclass

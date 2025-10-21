@@ -14,21 +14,21 @@ def test_imports():
     print("Testing imports...")
     
     try:
-        from data_collection.scrapers import get_scraper, PropertyListing
+        from src.data_collection.scrapers import get_scraper, PropertyListing
         print("✅ Scrapers import successful")
     except Exception as e:
         print(f"❌ Scrapers import failed: {e}")
         return False
     
     try:
-        from data_collection.enrichment import GeospatialEnricher
+        from src.data_collection.enrichment import GeospatialEnricher
         print("✅ Geospatial enrichment import successful")
     except Exception as e:
         print(f"❌ Geospatial enrichment import failed: {e}")
         return False
     
     try:
-        from database import Listing, ListingEnrichment, db_manager
+        from src.database import Listing, ListingEnrichment, db_manager
         print("✅ Database models import successful")
     except Exception as e:
         print(f"❌ Database models import failed: {e}")
@@ -42,7 +42,7 @@ def test_imports():
         return False
     
     try:
-        from utils.monitoring import get_logger
+        from src.utils.monitoring import get_logger
         print("✅ Monitoring import successful")
     except Exception as e:
         print(f"❌ Monitoring import failed: {e}")
