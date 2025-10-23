@@ -123,7 +123,7 @@ def main():
         '--platforms',
         nargs='+',
         help='Platforms to scrape (default: all configured platforms)',
-        choices=['avito', 'mubawab', 'sarouty']
+        choices=['mubawab']
     )
     
     parser.add_argument(

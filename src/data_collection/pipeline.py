@@ -477,7 +477,7 @@ class DataCollectionPipeline:
 
 def create_pipeline_config(
     cities: List[str] = ['casablanca', 'rabat', 'marrakech', 'tangier'],
-    platforms: List[str] = ['avito', 'mubawab', 'sarouty'],
+    platforms: List[str] = ['mubawab'],
     **kwargs
 ) -> PipelineConfig:
     """Helper function to create pipeline configuration"""

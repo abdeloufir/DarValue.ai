@@ -79,9 +79,7 @@ def test_core_files():
     
     core_files = [
         "src/data_collection/scrapers/base_scraper.py",
-        "src/data_collection/scrapers/avito_scraper.py", 
         "src/data_collection/scrapers/mubawab_scraper.py",
-        "src/data_collection/scrapers/sarouty_scraper.py",
         "src/data_collection/enrichment/geospatial_enricher.py",
         "src/data_collection/enrichment/image_collector.py",
         "src/data_collection/pipeline.py",
@@ -170,9 +168,7 @@ def test_scraper_implementations():
     print("\n🕷️  Testing Scraper Implementations...")
     
     scrapers = [
-        ("avito_scraper.py", "AvitoScraper"),
-        ("mubawab_scraper.py", "MubawabScraper"), 
-        ("sarouty_scraper.py", "SaroutyScraper")
+        ("mubawab_scraper.py", "MubawabScraper")
     ]
     
     passed = 0
@@ -236,7 +232,7 @@ def generate_summary():
     print("=" * 55)
     
     components = [
-        "✅ Multi-platform web scrapers (Avito, Mubawab, Sarouty)",
+        "✅ Multi-platform web scraper (Mubawab)",
         "✅ Geospatial enrichment with OSM and Google Maps integration", 
         "✅ Image collection and processing system",
         "✅ PostgreSQL database schema with full relational structure",
@@ -254,7 +250,7 @@ def generate_summary():
     
     print(f"\n📊 DATA COLLECTION CAPABILITIES:")
     print(f"   🏙️  Cities: Casablanca, Rabat, Marrakech, Tangier, Fes, Agadir")
-    print(f"   🌐 Platforms: Avito.ma, Mubawab.ma, Sarouty.ma")
+    print(f"   🌐 Platform: Mubawab.ma")
     print(f"   📋 Data Points: 15+ fields per listing")
     print(f"   🗺️  Enrichment: 10+ geospatial features")
     print(f"   📸 Images: Download + AI classification")

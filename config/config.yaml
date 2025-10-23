@@ -8,32 +8,16 @@ cities:
   - agadir
 
 platforms:
-  - avito
   - mubawab
-  - sarouty
 
 # Platform-specific scraper configurations
 scrapers:
-  avito:
-    max_pages: 10
-    delay: 1.5  # seconds between requests
-    timeout: 30
-    retry_attempts: 3
-    use_selenium: false
-    
   mubawab:
     max_pages: 10
     delay: 1.0
     timeout: 25
     retry_attempts: 3
     use_selenium: false
-    
-  sarouty:
-    max_pages: 8
-    delay: 2.0
-    timeout: 35
-    retry_attempts: 2
-    use_selenium: true  # Sarouty requires JavaScript
 
 # Data quality settings
 data_quality:

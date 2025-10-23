@@ -120,7 +120,7 @@ class AppConfig:
         if self.target_cities is None:
             self.target_cities = ['casablanca', 'rabat', 'marrakech', 'tangier', 'fes', 'agadir']
         if self.target_platforms is None:
-            self.target_platforms = ['avito', 'mubawab', 'sarouty']
+            self.target_platforms = ['mubawab']
 
 
 class ConfigManager:
@@ -275,23 +275,12 @@ class ConfigManager:
         """Save a configuration template file"""
         template = {
             'cities': ['casablanca', 'rabat', 'marrakech', 'tangier', 'fes', 'agadir'],
-            'platforms': ['avito', 'mubawab', 'sarouty'],
+            'platforms': ['mubawab'],
             'scrapers': {
-                'avito': {
-                    'max_pages': 10,
-                    'delay': 1.5,
-                    'timeout': 30
-                },
                 'mubawab': {
                     'max_pages': 10,
                     'delay': 1.0,
                     'timeout': 25
-                },
-                'sarouty': {
-                    'max_pages': 8,
-                    'delay': 2.0,
-                    'timeout': 35,
-                    'use_selenium': True
                 }
             }
         }

@@ -296,7 +296,7 @@ class ListingDeduplicator:
         patterns_to_remove = [
             r'^(vente|à vendre|for sale|sale)\s*',
             r'\s*(urgent|opportunity|occasion).*$',
-            r'\s*-\s*(avito|mubawab|sarouty).*$',
+            r'\s*-\s*(mubawab).*$',
             r'\s*\([^)]*\)\s*',  # Remove parentheses content
         ]
         
@@ -554,8 +554,8 @@ class ListingDeduplicator:
             return max(listings, key=completeness_score)
         
         elif strategy == 'keep_best_platform':
-            # Preference order: sarouty > mubawab > avito
-            platform_priority = {'sarouty': 3, 'mubawab': 2, 'avito': 1}
+            # Only mubawab platform remains
+            platform_priority = {'mubawab': 1}
             return max(listings, key=lambda x: platform_priority.get(x.source_platform, 0))
         
         else:
@@ -587,8 +587,8 @@ class ListingDeduplicator:
             return df.loc[df['completeness'].idxmax(), 'id']
         
         elif strategy == 'keep_best_platform':
-            # Preference order: sarouty > mubawab > avito
-            platform_priority = {'sarouty': 3, 'mubawab': 2, 'avito': 1}
+            # Only mubawab platform remains
+            platform_priority = {'mubawab': 1}
             df['platform_score'] = df['source_platform'].map(lambda x: platform_priority.get(x, 0))
             return df.loc[df['platform_score'].idxmax(), 'id']
         
@@ -617,8 +617,8 @@ class ListingDeduplicator:
             return max(listings, key=completeness_score)
         
         elif strategy == 'keep_best_platform':
-            # Preference order: sarouty > mubawab > avito
-            platform_priority = {'sarouty': 3, 'mubawab': 2, 'avito': 1}
+            # Only mubawab platform remains
+            platform_priority = {'mubawab': 1}
             return max(listings, key=lambda x: platform_priority.get(x.source_platform, 0))
         
         else:

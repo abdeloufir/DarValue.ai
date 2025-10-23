@@ -8,7 +8,7 @@ DarValue.ai predicts accurate property prices in major Moroccan cities (Casablan
 
 ## Features
 
-- **Data Collection**: Automated scraping from Avito.ma, Mubawab.ma, and Sarouty.ma
+- **Data Collection**: Automated scraping from Mubawab.ma
 - **Geospatial Enrichment**: Integration with OpenStreetMap, Google Maps API, and Moroccan government data
 - **Machine Learning**: Advanced models for price prediction based on features and images
 - **Computer Vision**: Automated image analysis for property characteristics

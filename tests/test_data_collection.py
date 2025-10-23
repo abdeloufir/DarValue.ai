@@ -12,7 +12,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
 
 from src.data_collection.scrapers.base_scraper import BaseScraper, PropertyListing
-from src.data_collection.scrapers.avito_scraper import AvitoScraper
+from src.data_collection.scrapers.mubawab_scraper import MubawabScraper
 from src.data_collection.enrichment.geospatial_enricher import GeospatialEnricher
 from src.data_collection.enrichment.image_collector import ImageDownloader, ImageMetadata
 from src.database.models import Listing, ListingEnrichment
@@ -52,7 +52,7 @@ class TestBaseScraper:
     
     def test_price_extraction(self):
         """Test price extraction from text"""
-        scraper = AvitoScraper()
+        scraper = MubawabScraper()
         
         assert scraper.extract_price("1 500 000 DH") == 1500000
         assert scraper.extract_price("Price: 850000") == 850000
@@ -61,7 +61,7 @@ class TestBaseScraper:
     
     def test_surface_extraction(self):
         """Test surface area extraction"""
-        scraper = AvitoScraper()
+        scraper = MubawabScraper()
         
         assert scraper.extract_surface("80 m²") == 80.0
         assert scraper.extract_surface("120.5 m2") == 120.5
@@ -70,7 +70,7 @@ class TestBaseScraper:
     
     def test_coordinate_extraction(self):
         """Test coordinate extraction from URLs"""
-        scraper = AvitoScraper()
+        scraper = MubawabScraper()
         
         url1 = "http://example.com/listing?lat=33.5731&lng=-7.5898"
         lat, lng = scraper.extract_coordinates_from_url(url1)
@@ -218,7 +218,7 @@ class TestDatabaseModels:
     def test_listing_model(self):
         """Test Listing model creation"""
         listing = Listing(
-            source_platform="avito",
+            source_platform="mubawab",
             source_id="123456",
             source_url="http://example.com/listing",
             title="Test Apartment",
@@ -229,7 +229,7 @@ class TestDatabaseModels:
             property_type="apartment"
         )
         
-        assert listing.source_platform == "avito"
+        assert listing.source_platform == "mubawab"
         assert listing.title == "Test Apartment"
         assert listing.price_mad == 1500000
     
@@ -266,7 +266,7 @@ class TestDataPipeline:
         
         config = create_pipeline_config(
             cities=['casablanca', 'rabat'],
-            platforms=['avito'],
+            platforms=['mubawab'],
             max_pages_per_city=5
         )
         
@@ -277,15 +277,15 @@ class TestDataPipeline:
 
 def test_run_basic_scraper():
     """Integration test for basic scraping functionality"""
-    scraper = AvitoScraper()
+    scraper = MubawabScraper()
     
     # Test URL generation (without actually making requests)
     city_slug = scraper.city_mappings.get('casablanca')
     assert city_slug == 'casablanca'
     
     # Test scraper initialization
-    assert scraper.platform_name == "Avito"
-    assert scraper.base_url == "https://www.avito.ma"
+    assert scraper.platform_name == "Mubawab"
+    assert scraper.base_url == "https://www.mubawab.ma"
 
 
 if __name__ == '__main__':

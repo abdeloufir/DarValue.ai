@@ -22,7 +22,7 @@ class Listing(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     
     # Source information
-    source_platform = Column(String(50), nullable=False)  # avito, mubawab, sarouty
+    source_platform = Column(String(50), nullable=False)  # mubawab
     source_id = Column(String(100), nullable=False)  # Original listing ID
     source_url = Column(Text, nullable=True)
     

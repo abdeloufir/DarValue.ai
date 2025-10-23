@@ -284,7 +284,7 @@ def create_sample_data():
         'pool': np.random.choice([True, False], n_samples, p=[0.2, 0.8]),
         'garden': np.random.choice([True, False], n_samples, p=[0.3, 0.7]),
         'furnished': np.random.choice([True, False], n_samples),
-        'source_platform': np.random.choice(['avito', 'mubawab', 'sarouty'], n_samples),
+        'source_platform': np.random.choice(['mubawab'], n_samples),
         'scraped_at': pd.date_range('2024-01-01', periods=n_samples, freq='H')
     }
     

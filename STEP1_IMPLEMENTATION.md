@@ -6,7 +6,7 @@ This document outlines the implementation of **Step 1: Data Collection** for the
 
 We have successfully implemented a comprehensive data collection system that:
 
-1. **Scrapes real estate listings** from Avito.ma, Mubawab.ma, and Sarouty.ma
+1. **Scrapes real estate listings** from Mubawab.ma
 2. **Enriches data** with geospatial information using OpenStreetMap and Google Maps APIs
 3. **Downloads and processes images** with automatic classification and cloud storage
 4. **Stores everything** in a PostgreSQL database with full relational structure
@@ -21,9 +21,7 @@ DarValue.ai/
 │   ├── data_collection/          # Main data collection module
 │   │   ├── scrapers/            # Platform-specific scrapers
 │   │   │   ├── base_scraper.py  # Base scraper class
-│   │   │   ├── avito_scraper.py # Avito.ma scraper
 │   │   │   ├── mubawab_scraper.py # Mubawab.ma scraper
-│   │   │   └── sarouty_scraper.py # Sarouty.ma scraper
 │   │   ├── enrichment/          # Data enrichment modules
 │   │   │   ├── geospatial_enricher.py # Location-based features
 │   │   │   └── image_collector.py     # Image processing
@@ -37,11 +35,11 @@ DarValue.ai/
 ## 🔧 Features Implemented
 
 ### 1. Web Scraping
-- **Multi-platform support**: Avito, Mubawab, Sarouty
+- **Multi-platform support**: Mubawab
 - **Intelligent parsing**: Extracts prices, surfaces, room counts, amenities
 - **Robust error handling**: Retry mechanisms and graceful failures
 - **Rate limiting**: Respectful scraping with delays
-- **Selenium support**: For JavaScript-heavy sites like Sarouty
+- **Requests-based scraping**: Efficient HTTP scraping for Mubawab
 
 ### 2. Geospatial Enrichment
 - **Distance calculations**: To city centers, airports, amenities
@@ -107,7 +105,7 @@ python run_pipeline.py --setup-db
 python run_pipeline.py
 
 # Specific cities and platforms
-python run_pipeline.py --cities casablanca rabat --platforms avito mubawab --max-pages 5
+python run_pipeline.py --cities casablanca rabat --platforms mubawab --max-pages 5
 
 # Test mode (limited pages)
 python run_pipeline.py --max-pages 2
@@ -218,17 +216,10 @@ The system tracks comprehensive metrics:
 ### Scraping Configuration
 ```yaml
 scrapers:
-  avito:
-    max_pages: 10
-    delay: 1.5
-    timeout: 30
   mubawab:
     max_pages: 10
     delay: 1.0
-  sarouty:
-    max_pages: 8
-    delay: 2.0
-    use_selenium: true
+    timeout: 25
 ```
 
 ### Geospatial Configuration

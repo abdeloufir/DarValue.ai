@@ -58,7 +58,7 @@ def test_scraper_creation():
     try:
         from src.data_collection.scrapers import get_scraper
         
-        for platform in ['avito', 'mubawab', 'sarouty']:
+        for platform in ['mubawab']:
             scraper = get_scraper(platform)
             print(f"✅ {platform.capitalize()} scraper created: {scraper.platform_name}")
         
@@ -159,7 +159,7 @@ def test_database_models():
         
         # Test Listing model
         listing = Listing(
-            source_platform="avito",
+            source_platform="mubawab",
             source_id="123456",
             source_url="http://example.com/listing",
             title="Test Apartment",
@@ -192,9 +192,9 @@ def test_text_processing():
     print("\nTesting text processing...")
     
     try:
-        from src.data_collection.scrapers.avito_scraper import AvitoScraper
+        from src.data_collection.scrapers.mubawab_scraper import MubawabScraper
         
-        scraper = AvitoScraper()
+        scraper = MubawabScraper()
         
         # Test price extraction
         price_tests = [
