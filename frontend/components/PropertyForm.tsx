@@ -10,7 +10,6 @@ interface PropertyFormProps {
 
 export default function PropertyForm({ onPrediction, setLoading }: PropertyFormProps) {
   const [formData, setFormData] = useState<PropertyInput>({
-    price: 0,
     surface_m2: 0,
     rooms: 1,
     bathrooms: 1,
@@ -58,7 +57,7 @@ export default function PropertyForm({ onPrediction, setLoading }: PropertyFormP
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
-      [name]: ['price', 'surface_m2', 'rooms', 'bathrooms'].includes(name) 
+      [name]: ['surface_m2', 'rooms', 'bathrooms'].includes(name) 
         ? parseFloat(value) 
         : value,
     }))
@@ -70,7 +69,7 @@ export default function PropertyForm({ onPrediction, setLoading }: PropertyFormP
     setLoading(true)
 
     try {
-      if (!formData.price || !formData.surface_m2) {
+      if (!formData.surface_m2) {
         throw new Error('Please fill in all required fields')
       }
 
@@ -90,22 +89,6 @@ export default function PropertyForm({ onPrediction, setLoading }: PropertyFormP
           {error}
         </div>
       )}
-
-      {/* Price */}
-      <div>
-        <label className="block text-gray-700 font-semibold mb-2">
-          Price (MAD) *
-        </label>
-        <input
-          type="number"
-          name="price"
-          value={formData.price}
-          onChange={handleChange}
-          className="input-field"
-          placeholder="e.g., 2500000"
-          required
-        />
-      </div>
 
       {/* Surface */}
       <div>

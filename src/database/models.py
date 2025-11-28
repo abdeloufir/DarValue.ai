@@ -47,6 +47,8 @@ class Listing(Base):
     bedrooms = Column(Integer, nullable=True)
     bathrooms = Column(Integer, nullable=True)
     property_type = Column(String(50), nullable=True, index=True)  # apartment, house, villa, etc.
+    condition = Column(String(50), nullable=True, index=True)  # New, Renovated, Standard, Old
+    furnishing = Column(String(50), nullable=True, index=True)  # Furnished, Unfurnished, Unknown
     
     # Features and amenities
     amenities = Column(JSON, nullable=True)  # Parking, pool, garden, etc.
