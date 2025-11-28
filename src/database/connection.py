@@ -1,32 +1,47 @@
 """
 Database connection and session management for DarValue.ai
+Supports both PostgreSQL and SQLite
 """
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy.pool import QueuePool
+from sqlalchemy.pool import QueuePool, StaticPool
 from decouple import config
 from typing import Generator
 import logging
+import os
 
 from .models import Base
 
-# Database configuration
-DATABASE_URL = config(
-    'DATABASE_URL', 
-    default='postgresql://postgres:password@localhost:5432/darvalue_db'
-)
+# Use SQLite if specified, otherwise use PostgreSQL
+USE_SQLITE = os.getenv('USE_SQLITE', 'true').lower() == 'true'
 
-# Create engine with connection pooling
-engine = create_engine(
-    DATABASE_URL,
-    poolclass=QueuePool,
-    pool_size=20,
-    max_overflow=30,
-    pool_pre_ping=True,
-    pool_recycle=3600,
-    echo=config('DATABASE_ECHO', default=False, cast=bool)
-)
+if USE_SQLITE:
+    # SQLite configuration - use StaticPool for file-based DB
+    DATABASE_URL = 'sqlite:///./darvalue.db'
+    print("[DB] Using SQLite at darvalue.db")
+    engine = create_engine(
+        DATABASE_URL,
+        connect_args={'check_same_thread': False},
+        poolclass=StaticPool,
+        echo=config('DATABASE_ECHO', default=False, cast=bool)
+    )
+else:
+    # PostgreSQL configuration
+    DATABASE_URL = config(
+        'DATABASE_URL', 
+        default='postgresql://postgres:password@localhost:5432/darvalue_db'
+    )
+    print("[DB] Using PostgreSQL")
+    engine = create_engine(
+        DATABASE_URL,
+        poolclass=QueuePool,
+        pool_size=20,
+        max_overflow=30,
+        pool_pre_ping=True,
+        pool_recycle=3600,
+        echo=config('DATABASE_ECHO', default=False, cast=bool)
+    )
 
 # Session factory
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
