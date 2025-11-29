@@ -14,7 +14,13 @@ import os
 from .models import Base
 
 # Use SQLite if specified, otherwise use PostgreSQL
-USE_SQLITE = os.getenv('USE_SQLITE', 'true').lower() == 'true'
+# First check environment variable, then check .env file via decouple
+use_sqlite_env = os.getenv('USE_SQLITE')
+if use_sqlite_env is None:
+    # Try decouple to load from .env
+    USE_SQLITE = config('USE_SQLITE', default='false').lower() == 'true'
+else:
+    USE_SQLITE = use_sqlite_env.lower() == 'true'
 
 if USE_SQLITE:
     # SQLite configuration - use StaticPool for file-based DB

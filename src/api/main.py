@@ -244,7 +244,6 @@ async def get_neighborhoods(city: str):
         SELECT DISTINCT neighborhood FROM listings 
         WHERE city = :city AND neighborhood IS NOT NULL AND neighborhood != ''
         ORDER BY neighborhood
-        LIMIT 50
         """
         result = pd.read_sql(text(query), engine, params={"city": city})
         neighborhoods = result['neighborhood'].tolist()
