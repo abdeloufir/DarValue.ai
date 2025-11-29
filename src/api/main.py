@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 import sys
 from pathlib import Path
+import unicodedata
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
@@ -12,6 +13,18 @@ from src.models.property_analyzer import PropertyAnalyzer
 import pandas as pd
 from sqlalchemy import text
 from src.database.connection import engine
+
+def normalize_text(text: str) -> str:
+    """
+    Normalize text by removing accents and converting to lowercase
+    E.g., 'Guéliz' -> 'gueliz', 'Maarif' -> 'maarif'
+    """
+    if not text:
+        return ''
+    # Remove accents using NFD normalization
+    nfd = unicodedata.normalize('NFD', text)
+    cleaned = ''.join(c for c in nfd if unicodedata.category(c) != 'Mn')
+    return cleaned.lower()
 
 app = FastAPI(title="DarValue API", version="1.0.0")
 
@@ -237,7 +250,7 @@ async def get_cities():
 
 @app.get("/api/neighborhoods", response_model=List[str])
 async def get_neighborhoods(city: str):
-    """Get neighborhoods for a specific city"""
+    """Get neighborhoods for a specific city with case-insensitive, accent-free deduplication"""
     try:
         # Try to get from neighborhood column first
         query = """
@@ -247,6 +260,18 @@ async def get_neighborhoods(city: str):
         """
         result = pd.read_sql(text(query), engine, params={"city": city})
         neighborhoods = result['neighborhood'].tolist()
+        
+        # Deduplicate neighborhoods case-insensitively and accent-free
+        # Keep the first occurrence's original form
+        seen_normalized = set()
+        deduplicated = []
+        for neighborhood in neighborhoods:
+            normalized = normalize_text(neighborhood)
+            if normalized and normalized not in seen_normalized:
+                seen_normalized.add(normalized)
+                deduplicated.append(neighborhood)
+        
+        neighborhoods = deduplicated
         
         # If no neighborhoods found, extract from descriptions
         if not neighborhoods or (len(neighborhoods) == 1 and neighborhoods[0] == 'Unknown'):
